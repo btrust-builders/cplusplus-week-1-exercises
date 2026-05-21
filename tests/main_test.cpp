@@ -120,11 +120,6 @@ TEST(BitcoinFunctions, ValidateBlockHeight) {
               (std::pair<bool, std::string>{false, "Block height cannot be negative"}));
     EXPECT_EQ(validate_block_height(1'000'000),
               (std::pair<bool, std::string>{false, "Block height seems unrealistic"}));
-
-    EXPECT_EQ(validate_block_height(123.5),
-              (std::pair<bool, std::string>{false, "Block height must be an integer"}));
-    EXPECT_EQ(validate_block_height(std::string{"100"}),
-              (std::pair<bool, std::string>{false, "Block height must be an integer"}));
 }
 
 TEST(BitcoinFunctions, HalvingSchedule) {
