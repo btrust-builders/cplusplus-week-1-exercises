@@ -8,6 +8,7 @@
 #include <tuple>
 #include <utility>
 #include <vector>
+#include <variant>
 
 #include "main.h"
 
@@ -168,4 +169,22 @@ TEST(BitcoinFunctions, FindUtxoWithMinValue) {
 
     EXPECT_FALSE(find_utxo_with_min_value(utxos, 100'000).has_value());
     EXPECT_FALSE(find_utxo_with_min_value({}, 10'000).has_value());
+}
+
+TEST(BitcoinFunctions, CreateUtxo) {
+    auto utxo =create_utxo("abc123", 0);
+    EXPECT_EQ(std::get<std::string>(utxo.at("txid")), "abc123");
+    EXPECT_EQ(std::get<int>(utxo.at("vout")), 0);
+    EXPECT_EQ(utxo.size(), 2);
+
+    std::map<std::string, UtxoField> extras{
+        {"value", 50'000LL},
+        {"address", std::string{"bc1qxyz"}},
+    };
+    auto utxo_with_extras = create_utxo("def456", 1, extras);
+
+    EXPECT_EQ(std::get<std::string>(utxo_with_extras.at("txid")), "def456");
+    EXPECT_EQ(std::get<int>(utxo_with_extras.at("vout")), 1);
+    EXPECT_EQ(std::get<long long>(utxo_with_extras.at("value")), 50'000LL);
+    EXPECT_EQ(std::get<std::string>(utxo_with_extras.at("address")), "bc1qxyz");
 }
